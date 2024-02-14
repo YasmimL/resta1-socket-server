@@ -1,5 +1,10 @@
 plugins {
     id("java")
+    application
+}
+
+application {
+    mainClass.set("br.com.ifce.Main")
 }
 
 group = "br.com.ifce"

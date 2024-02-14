@@ -1,5 +1,6 @@
 package br.com.ifce.service;
 
+import br.com.ifce.model.GameState;
 import br.com.ifce.model.Message;
 import br.com.ifce.model.Player;
 import br.com.ifce.model.enums.MessageType;
@@ -60,7 +61,10 @@ public class GameService {
                 players.get((int) Math.round(Math.random())).getName()
         );
 
-        var message = new Message<>(MessageType.BOARD, this.repository.getBoard());
+        var message = new Message<>(MessageType.START_GAME, new GameState(
+                this.repository.getBoard(),
+                this.repository.getCurrentPlayer()
+        ));
         register.send(message);
     }
 }
