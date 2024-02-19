@@ -1,6 +1,8 @@
 package br.com.ifce.network;
 
 import br.com.ifce.model.Message;
+import br.com.ifce.model.Movement;
+import br.com.ifce.service.GameService;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -32,6 +34,10 @@ public class Register {
     }
 
     public void onMessage(Message<?> message) {
+        var service = GameService.getInstance();
+        switch (message.getType()) {
+            case MOVEMENT -> service.handleMovement((Movement) message.getPayload());
+        }
 //        this.playerThreads.forEach(t -> t.print("SERVER: " + message));
     }
 

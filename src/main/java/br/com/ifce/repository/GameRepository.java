@@ -1,5 +1,6 @@
 package br.com.ifce.repository;
 
+import br.com.ifce.model.Board;
 import br.com.ifce.model.Player;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import java.util.Map;
 public class GameRepository {
 
     @Getter
-    private int[][] board;
+    private Board board;
 
     @Getter
     private Map<String, Player> players;
