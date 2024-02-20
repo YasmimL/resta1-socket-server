@@ -2,6 +2,7 @@ package br.com.ifce.network;
 
 import br.com.ifce.model.Message;
 import br.com.ifce.model.Movement;
+import br.com.ifce.model.enums.MessageType;
 import br.com.ifce.service.GameService;
 
 import java.io.IOException;
@@ -16,14 +17,14 @@ public class Register {
 
     public Register() {
         int port = 5000;
-        int totalPlayers = 2;
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            IntStream.range(0, totalPlayers).forEach(($) -> {
+            IntStream.range(0, GameService.TOTAL_PLAYERS).forEach((i) -> {
                 try {
                     var socket = serverSocket.accept();
-                    var thread = new PlayerThread(socket, this);
+                    var thread = new PlayerThread(socket, this, String.format("PLAYER %d", i + 1));
                     this.playerThreads.add(thread);
                     thread.start();
+                    thread.send(new Message<>(MessageType.PLAYER_REGISTERED, thread.getPlayerKey()));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -33,15 +34,18 @@ public class Register {
         }
     }
 
-    public void onMessage(Message<?> message) {
+    public void onMessage(String playerKey, Message<?> message) {
         var service = GameService.getInstance();
         switch (message.getType()) {
-            case MOVEMENT -> service.handleMovement((Movement) message.getPayload());
+            case MOVEMENT -> service.handleMovement(playerKey, (Movement) message.getPayload());
         }
-//        this.playerThreads.forEach(t -> t.print("SERVER: " + message));
     }
 
     public void send(Message<?> message) {
         this.playerThreads.forEach(t -> t.send(message));
+    }
+
+    public List<String> getPlayers() {
+        return this.playerThreads.stream().map(PlayerThread::getPlayerKey).toList();
     }
 }

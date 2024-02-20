@@ -56,6 +56,7 @@ public class Peg {
     }
 
     public boolean validateMove(int targetRow, int targetColumn) {
+        if (this.isInvalidSpot() || this.isSpotEmpty()) return false;
         if (targetRow < 0 || targetRow > this.board.getLastRow()) return false;
         if (targetColumn < 0 || targetColumn > this.board.getLastColumn()) return false;
 

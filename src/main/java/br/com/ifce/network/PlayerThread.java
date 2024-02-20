@@ -1,29 +1,34 @@
 package br.com.ifce.network;
 
 import br.com.ifce.model.Message;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+@RequiredArgsConstructor
 public class PlayerThread extends Thread {
 
     private final Socket socket;
 
     private final Register register;
 
-    public PlayerThread(Socket socket, Register register) {
-        this.socket = socket;
-        this.register = register;
-    }
+    @Getter
+    private final String playerKey;
+
+    @Setter
+    private boolean interrupted;
 
     @Override
     public void run() {
         try {
-            while (true) {
+            while (!this.interrupted) {
                 var inputStream = new ObjectInputStream(this.socket.getInputStream());
-                this.register.onMessage((Message<?>) inputStream.readObject());
+                this.register.onMessage(this.playerKey, (Message<?>) inputStream.readObject());
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -2,7 +2,9 @@ package br.com.ifce.model;
 
 import lombok.Getter;
 
+import java.util.List;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Board {
 
@@ -49,6 +51,10 @@ public class Board {
         }
     }
 
+    public List<Peg> getPegs() {
+        return Stream.of(this.board).flatMap(Stream::of).toList();
+    }
+
     public Peg get(int row, int column) {
         return this.board[row][column];
     }
@@ -91,6 +97,4 @@ public class Board {
 
         return source.validateMove(movement.getTarget());
     }
-
-
 }

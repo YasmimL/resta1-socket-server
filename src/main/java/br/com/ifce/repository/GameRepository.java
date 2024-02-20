@@ -4,6 +4,7 @@ import br.com.ifce.model.Board;
 import br.com.ifce.model.Player;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Map;
 
@@ -17,5 +18,6 @@ public class GameRepository {
     private Map<String, Player> players;
 
     @Getter
+    @Setter
     private String currentPlayer;
 }
