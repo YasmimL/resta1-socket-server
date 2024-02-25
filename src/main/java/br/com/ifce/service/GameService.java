@@ -6,6 +6,7 @@ import br.com.ifce.network.Register;
 import br.com.ifce.repository.GameRepository;
 import lombok.Setter;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,6 +59,17 @@ public class GameService {
         }
 
         this.handleHit(movement);
+    }
+
+    public void handleChat(String playerKey, String message) {
+        register.send(new Message<>(
+                MessageType.CHAT,
+                new ChatMessage(
+                        playerKey,
+                        LocalTime.now(),
+                        message
+                )
+        ));
     }
 
     private void handleHit(Movement movement) {

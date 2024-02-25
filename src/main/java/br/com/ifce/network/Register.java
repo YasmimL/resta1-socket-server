@@ -38,6 +38,7 @@ public class Register {
         var service = GameService.getInstance();
         switch (message.getType()) {
             case MOVEMENT -> service.handleMovement(playerKey, (Movement) message.getPayload());
+            case CHAT -> service.handleChat(playerKey, (String) message.getPayload());
         }
     }
 
