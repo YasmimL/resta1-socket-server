@@ -47,6 +47,25 @@ public class GameService {
         register.send(message);
     }
 
+    public void restartGame() {
+        List<Player> players = this.register.getPlayers().stream()
+                .map(it -> new Player(it, 0))
+                .toList();
+
+        this.repository = new GameRepository(
+                new Board(),
+                players.stream().collect(Collectors.toMap(Player::getName, player -> player)),
+                players.get((int) Math.round(Math.random())).getName()
+        );
+
+        var message = new Message<>(MessageType.RESTART_GAME, new GameState(
+                this.repository.getBoard().getNumericBoard(),
+                this.repository.getCurrentPlayer(),
+                this.getGameScore()
+        ));
+        register.send(message);
+    }
+
     public void handleMovement(String playerKey, Movement movement) {
         if (!playerKey.equals(this.getCurrentPlayer())) return;
 
@@ -103,7 +122,8 @@ public class GameService {
         var board = this.repository.getBoard();
         var pegs = board.getPegs();
 
-        if (pegs.size() == 1) {
+        var busyPegs = pegs.stream().filter(Peg::isSpotBusy).count();
+        if (busyPegs == 1) {
             this.finishGame(MessageType.GAME_COMPLETE);
             return true;
         }
@@ -150,5 +170,14 @@ public class GameService {
         return this.repository.getPlayers().values().stream()
                 .sorted()
                 .toList();
+    }
+
+    public void handlePassTurn(String playerKey) {
+        if (!this.repository.getCurrentPlayer().equals(playerKey)) return;
+        this.changeTurn();
+    }
+
+    public void handleGiveUp(String playerKey) {
+        this.register.send(new Message<>(MessageType.GIVE_UP, playerKey));
     }
 }

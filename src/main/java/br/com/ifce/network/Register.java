@@ -39,6 +39,9 @@ public class Register {
         switch (message.getType()) {
             case MOVEMENT -> service.handleMovement(playerKey, (Movement) message.getPayload());
             case CHAT -> service.handleChat(playerKey, (String) message.getPayload());
+            case PASS_TURN -> service.handlePassTurn(playerKey);
+            case GIVE_UP -> service.handleGiveUp(playerKey);
+            case RESTART_GAME -> service.restartGame();
         }
     }
 

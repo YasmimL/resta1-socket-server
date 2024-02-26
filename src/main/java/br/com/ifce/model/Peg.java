@@ -43,7 +43,7 @@ public class Peg {
     public boolean canMove() {
         var validMoves = new int[][]{
                 new int[]{this.row - 2, this.column},
-                new int[]{this.row, this.column + 2},
+                new int[]{this.row, this.column - 2},
                 new int[]{this.row + 2, this.column},
                 new int[]{this.row, this.column + 2}
         };
