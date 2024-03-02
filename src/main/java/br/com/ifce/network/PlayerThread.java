@@ -31,6 +31,7 @@ public class PlayerThread extends Thread {
                 this.register.onMessage(this.playerKey, (Message<?>) inputStream.readObject());
             }
         } catch (Exception e) {
+            this.close();
             e.printStackTrace();
         }
     }
@@ -39,6 +40,15 @@ public class PlayerThread extends Thread {
         try {
             var outputStream = new ObjectOutputStream(this.socket.getOutputStream());
             outputStream.writeObject(message);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void close() {
+        this.interrupted = true;
+        try {
+            this.socket.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

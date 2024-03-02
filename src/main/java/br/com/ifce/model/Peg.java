@@ -20,9 +20,7 @@ public class Peg {
     @Getter
     private final Board board;
 
-    public boolean isInvalidSpot() {
-        return this.value == -1;
-    }
+    public boolean isInvalidSpot() { return this.value == -1;}
 
     public boolean isSpotEmpty() {
         return this.value == 0;
