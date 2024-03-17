@@ -1,4 +1,4 @@
-package br.com.ifce.network;
+package br.com.ifce.network.socket;
 
 import br.com.ifce.model.Message;
 import lombok.Getter;
@@ -15,7 +15,7 @@ public class PlayerThread extends Thread {
 
     private final Socket socket;
 
-    private final Register register;
+    private final SocketRegister register;
 
     @Getter
     private final String playerKey;
