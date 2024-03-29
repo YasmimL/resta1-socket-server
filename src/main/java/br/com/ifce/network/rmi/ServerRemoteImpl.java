@@ -27,34 +27,21 @@ public class ServerRemoteImpl extends UnicastRemoteObject implements ServerRemot
     }
 
     @Override
-    public void registerClient(ClientRemote client) throws RemoteException {
+    public synchronized String registerClient(ClientRemote client) throws RemoteException {
         this.clients.add(client);
+        this.addShutdownHook(client);
         var playerKey = String.format("PLAYER %d", this.getTotalClients());
+        this.register.addPlayer(playerKey);
 
-        new Thread(() -> {
-            try {
-                this.register.addPlayer(playerKey);
-                client.onMessage(new Message<>(MessageType.PLAYER_REGISTERED, playerKey));
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
-        }).start();
+        if (this.clients.size() == GameService.TOTAL_PLAYERS) {
+            new Thread(() -> GameService.getInstance().initGame(
+                    this.register.getPlayers().stream()
+                            .map(it -> new Player(it, 0))
+                            .toList()
+            )).start();
+        }
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            if (this.clients.size() == GameService.TOTAL_PLAYERS) {
-                GameService.getInstance().initGame(
-                        register.getPlayers().stream()
-                                .map(it -> new Player(it, 0))
-                                .toList()
-                );
-            }
-        }).start();
+        return playerKey;
     }
 
     @Override
@@ -71,5 +58,15 @@ public class ServerRemoteImpl extends UnicastRemoteObject implements ServerRemot
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    private void addShutdownHook(ClientRemote client) {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                client.onMessage(new Message<>(MessageType.CLOSE, null));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }));
     }
 }

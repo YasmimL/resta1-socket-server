@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 public interface ServerRemote extends Remote {
     int getTotalClients() throws RemoteException;
 
-    void registerClient(ClientRemote client) throws RemoteException;
+    String registerClient(ClientRemote client) throws RemoteException;
 
     void onMessage(String playerKey, Message<?> message) throws RemoteException;
 

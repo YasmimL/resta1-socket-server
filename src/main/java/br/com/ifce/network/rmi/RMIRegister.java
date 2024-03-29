@@ -21,13 +21,8 @@ public class RMIRegister implements Register {
     public RMIRegister() {
         try {
             this.server = new ServerRemoteImpl(this);
-
             Registry registry = LocateRegistry.createRegistry(1099);
             registry.rebind("Server", this.server);
-
-//            while (this.server.getTotalClients() < GameService.TOTAL_PLAYERS) {
-//            }
-
             GameService.getInstance().setRegister(this);
         } catch (Exception e) {
             e.printStackTrace();
